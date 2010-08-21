@@ -1,0 +1,37 @@
+- if @videos.any?
+  .files-hedar
+    .files-hedar-icon
+      =image_tag("/images/video-icon.jpg", :width => "19", :height => "20")
+    .files-hedar-txt
+      =:video.l
+  
+  .files-vide0-box
+    - @videos.each do |video|
+      .files-img
+        %div{:align => "center"}
+          =link_to(thumbnail_view(video, :thumb), user_upload_path(video.user, video))
+          -# if !upload.thumbnails.empty?
+          -#  =link_to(image_tag(video.thumbnails[0].public_filename), user_upload_path(video.user, video))
+          -# else
+          -#  =image_tag("Video_128.png")
+      .files-txt-box
+        .files-blk
+          =link_to(video.name, user_upload_path(video.user, video))
+        .featured-blue-txt-folder
+          =:folder.l
+        .files-blk2
+          =video.folder.name
+        .files-green-txt
+          =:views.l
+        .files-blk2
+          - if !video.view_count.blank?
+            =video.view_count
+          - else
+            0
+        .files-green-txt
+          =:added.l
+        #all-files-created-date.files-blk2-date
+          =distance_of_time_in_words_to_now(video.created_at, Time.now)  
+          
+  .pagination-txt
+    =will_paginate @videos, :param_name => :videopage

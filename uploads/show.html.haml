@@ -1,0 +1,135 @@
+.maedl-pading-
+  .left-user-details-box
+    .hedar-2{:style=>"width:100%;"}
+      .hedar-2-left-img
+      .hedar-2-bg{:style=>"width:96%;"}
+        = link_to h(@upload.folder.name), user_folder_path(@upload.user, @upload.folder)
+        - if @is_current_user
+          =": #{@upload.name}"
+      .hedar-2-right-img
+      
+    .file-list{:style=>"margin-left:10px;margin-top:10px;margin-bottom:10px;"}
+      - if @upload.content_type =~ /video|audio/
+        - if @upload.state == "converted"
+          - if (@upload.content_type =~ /video/)
+            %a{:href => @upload.public_filename, :id => "player", :style=> "display:block;width:400px;height:300px;"}
+          - else
+            %a{:href => @upload.public_filename, :id => "audio", :style=> "display:block;width:400px;height:30px;"}  
+        - else
+          - if @upload.state == "error"
+            .right-grey-txt-more
+              = "Error Converting Video, it will be removed shortly" 
+          - else
+            .right-grey-txt-more
+              = "Video is being converted, check back in a few minutes"
+      - if @upload.content_type =~ /image/
+        - if @upload.thumbnails[0]
+          = thumbnail_view(@upload, :medium)
+        - else
+          =:sorry_the_thumbnail_is_not_available.l      
+        
+    .boxleft{:style=>"width:250px;float:right;margin-top:10px;"}
+      .right-grey-txt-more{:style=>"width:100%;"}
+        %b= "File's Description :"
+        = truncate(@upload.description,50,'...')
+        %br
+          %b= :uploaded_by.l 
+          = link_to @upload.user.login, user_path(@upload.user.custom_name)
+          %br 
+            %b= "Created on : " 
+            = @upload.created_at.strftime("%b %d,%Y")
+            - if not @upload.tags.blank?
+              %br
+                %b= "Tagged with : "
+                = @upload.tags.collect{|t| link_to( h(t.name), tag_url(t), :class => 'tag') }.join(" ")
+
+    .hedar-2{:style=>"width:100%;"}
+      .hedar-2-left-img
+      .hedar-2-bg{:style=>"width:96%;"}
+        = :add_comment.l
+      .hedar-2-right-img
+    =render :partial => "comments/comment_form", :locals => {:commentable => @upload}
+
+    .hedar-2{:style=>"width:100%;"}
+      .hedar-2-left-img
+      .hedar-2-bg{:style=>"width:96%;"}
+        =:recent_comments_on_this_file.l
+      .hedar-2-right-img
+      #no-comments
+        - if @upload.comments.empty?
+          =:no_comments_yet.l
+      %a#newest_comment
+        = render :partial => 'comments/comment', :collection => @comments
+      #all-comments.right-menu-box2
+        .details-grey-txt3
+          -#%span#more_comments_links= more_user_comments_links
+          =link_to(:all_comments.l, comments_path(:commentable_type => "Upload", :commentable_id => @upload.id))
+        .pagination-txt  
+          =will_paginate @comments
+        
+  .right-panal-user-details
+    = render :partial => 'posts/author_profile', :locals => {:user => @upload.user}
+    - if @is_current_user
+      .smll-hedar
+        .smll-hedar-left-img
+        .smll-hedar-bg
+          =:things_you_can_do.l
+        .smll-hedar-right-img
+ 
+    #uploadmenu{:style => "{float: left; width: 100%;}"}
+      - if @is_current_user
+        .right-menu-box2
+          .right-icon
+            <img src="/images/edit_file.png" width="18" height="18" />
+          .details-grey-txt3
+            = link_to :edit_this_file_details.l, edit_user_upload_path(@upload.user, @upload),{:style=> 'text-decoration:none'}
+        .right-menu-box2
+          .right-icon
+            <img src="/images/delete.png" width="18" height="18" />
+          .details-grey-txt3
+            = link_to(:delete_this_file.l, user_upload_path(@upload.user, @upload), :confirm => :are_you_sure.l, :method => :delete, :style=> 'text-decoration:none')
+        .right-menu-box2
+          .right-icon
+            <img src="/images/Upload-files.jpg" width="18" height="16" />
+          .details-grey-txt3
+            = link_to(:new_upload.l, new_user_upload_path(@upload.user),{:style=> 'text-decoration:none'})
+        .right-menu-box2
+          .right-icon
+            <img src="/images/download.gif" width="18" height="18" />
+          .details-grey-txt3
+            = link_to ('Download', download_file_path(@upload.id),{:style=> 'text-decoration:none'})
+        = render :partial => 'toggle_featured', :locals => {:upload => @upload} 
+        
+      #spinner2{:style => "{display: none}"}
+        =image_tag("ajax-loader.gif")
+      #favorite
+        - if logged_in?
+          = render :partial => 'favorites/toggle_favorite', :locals => {:favoritable => @upload}
+    - if (!@upload.favorited_count.nil?)
+      - if @upload.favorited_count > 0
+        .smll-hedar
+          .smll-hedar-left-img
+          .smll-hedar-bg
+            Other Information
+          .smll-hedar-right-img
+        
+        .right-grey-txt-more
+          =render :partial => "favorited_count", :locals => {:upload => @upload}
+  
+    = render :partial => 'base/ad'
+  
+- if logged_in?
+  :javascript 
+    window.onload=function()
+    {
+    new Ajax.Request("/keep_favorited/#{@upload.id}");
+    }
+  
+- unless @upload.state == "error"
+  - if @upload.content_type =~ /video/
+    %script
+      flowplayer("player", "/flowplayer/flowplayer-3.1.2.swf",{clip:{autoPlay: false,autoBuffering: true}});
+  - if @upload.content_type =~ /audio/
+    %script
+      flowplayer("audio", "/flowplayer/flowplayer-3.1.2.swf", {plugins: {audio: {url: '/flowplayer/flowplayer.audio-3.1.0.swf'}, controls: { fullscreen: false, height: 30 }}});    
+    

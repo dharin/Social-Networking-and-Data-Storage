@@ -1,0 +1,113 @@
+=javascript_include_tag 'prototype'
+=javascript_include_tag 'lowpro'
+=javascript_include_tag 'application'
+- # @meta = { :description => "#{@forum.name.capitalize} discussion forum.",:keywords => "#{@forum.tags.join(', ') if @forum.tags}",:robots => AppConfig.robots_meta_show_content}
+-# @section = ('community')
+-# @page_title = "Manga Me files"
+
+-#.box.alt.first_alt
+-#  %span.arrow
+-#    %div
+-#      - if current_user.admin?
+-#        = link_to 'Forums', '/forums'
+-#        = ">>" 
+-#        = link_to 'Manga Me Forum', '/forums/1-manga-me-forum'
+-#        = ">>"
+-#        = link_to 'Files', :controller => 'forums', :action => 'files', :type => 'popular' 
+-#      - else
+-#        = link_to 'Manga Me Forum', '/forums/1-manga-me-forum'
+-#        = ">>"
+-#        = link_to 'Files', :controller => 'forums', :action => 'files', :type => 'popular' 
+
+.inar-page-tab-menu  
+  = tabnav :mangame
+-#.inar-page-tab-sab-menu
+-#  %ul
+-#    %li
+-#      = link_to :popular.l, '/uploads/all?type=popular'
+-#    |
+-#    %li
+-#      = link_to :new.l, '/uploads/all?type=new'
+-#    |
+-#    %li
+-#      = link_to :favorite.l, '/uploads/all?type=favorite'
+-#    |
+-#    %li
+-#      = link_to :recently_favorited.l, '/uploads/all?type=recentfavorite'
+  
+.inar-page-tab-sab-menu
+  = tabnav :files_submenu
+
+.maedl-pading-{:style=>"padding-left:0px;"}
+  .left-user-details-box
+    #all-files-header.dark-blue-iner-hader-txt
+      - if params[:type] == "new"
+        =:new.l.titleize
+      - elsif params[:type] == "favorite"
+        =:favorite.l.titleize
+      - elsif params[:type] == "recentfavorite"
+        =:recentfavorite.l.titleize
+      - else
+        =:popular.l
+      = " " << :files.l.titleize
+  
+    - if @uploads.any?
+      -#  .upload
+      -#    .dark-blue-iner-hader-txt
+      -#      =:uploads.l
+      -#    %ul
+      -#      - @uploads.each do |upload|
+      -#        %li  
+      -#          =icon_view(upload.content_type)
+      -#          -if upload.name != ""
+      -#            = link_to(upload.name, user_upload_path(upload.user, upload))
+      -#          -else
+      -#            = link_to(upload.filename, user_upload_path(upload.user, upload))
+                  
+      -#.spicer
+    
+    
+      - if @videos.any?
+        #videofiles
+          .hedar-1{:style=>"margin-top:5px;margin-left:25px;"}
+            .hedar-1-left-img
+            .hedar-1-bg
+              = image_tag("/images/video-icon.jpg", :width => "19", :height => "20")
+              =:videos.l
+            .hedar-1-right-img
+          #videos          
+            =render :partial => "files", :locals => {:files => @videos} 
+    
+      - if @audio.any?
+        #audiofiles  
+          .hedar-1{:style=>"margin-top:5px;margin-left:25px;"}
+            .hedar-1-left-img
+            .hedar-1-bg
+              =image_tag("/images/Audio.jpg", :width => "19", :height => "20")
+              =:audio.l
+            .hedar-1-right-img
+          -#=render :partial => "audio"
+          #audios
+            =render :partial => "files", :locals => {:files => @audio} 
+    
+      - if @images.any?
+        #imagefiles
+          .hedar-1{:style=>"margin-top:5px;margin-left:25px;"}
+            .hedar-1-left-img
+            .hedar-1-bg
+              =image_tag("/images/images.jpg", :width => "19", :height => "20")
+              =:images.l
+            .hedar-1-right-img
+          -#=render :partial => "images"
+          #images  
+            =render :partial => "files", :locals => {:files => @images} 
+ 
+    - else
+      .notice-grey-text
+        =:no_files_found_sorry.l
+  
+  .right-panal-user-details
+      
+
+:javascript 
+  dothis()

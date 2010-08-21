@@ -1,0 +1,69 @@
+#uploads
+
+  #uploads-main
+    -#%h3=:tags.l
+    -#%ul.tags        
+    -#- @tags.each do |tag|
+    -#  %li
+    -#    - if (tag.name.eql?(params[:tag_name]) )
+    -#      = link_to tag.name, user_photos_path(@user), :class => "selected", :style => "outline:none"
+    -#    - else
+    -#      = link_to tag.name, user_photos_path(:user_id => @user, :tag_name => tag.name), :style => "outline:none"
+        
+    =flash[:notice]
+    .folders-list
+      %h3= link_to :users_folders.l(:user=>@user.login), user_folders_path(@user)
+      = link_to( :upload.l, new_user_upload_path(@user), {:class => 'left'}, {:style => 'outline:none'})  if @is_current_user
+      = link_to( :new_folder.l, new_user_folder_path(@user), {:class => 'right'}, {:style => 'outline:none'})  if @is_current_user
+      
+      .clear
+    .folder-list        
+      %h3=:shared_folders.l
+      %ul
+        - @folders.each do |folder|
+          - if (folder.f_type_id != 3)
+            %li.upload-folder-list
+              %b= link_to (folder.name, user_folder_path(@user, folder.name),{:style=> 'text-decoration:none;outline:none'})
+              = "(" + folder.f_type.name + " folder)"
+              %ul
+                - @uploaded_file= Upload.find_all_by_folder_id(folder.id)
+                - @uploaded_file.each do |file|
+                  - if (file.folder_id == folder.id)
+                    %li.upload-file-list
+                      = icon_view(file.content_type)
+                      = link_to (file.name, user_upload_path(file.user_id, file.id),{:style=> 'text-decoration:none;outline:none'})
+                      = number_to_human_size(file.size,2)
+                      - if @is_current_user        
+                        = link_to :edit_details.l, edit_user_upload_path(@user.id, file.id) if @is_current_user
+                        |
+                        =link_to(:delete.l, user_upload_path(@user.id, file.id), :confirm => :are_you_sure_you_want_to_delete_this_photo.l, :method => :delete)
+                        
+    .folder-list    		    
+      %h3=:private_folders.l
+      %ul
+        - @folders.each do |folder|
+          - if (folder.f_type_id == 3)
+            %li.upload-file-list
+              %b= link_to (folder.name, user_folder_path(@user.id, folder.name),{:style=> 'text-decoration:none;outline:none'})
+              %ul
+                - @uploaded_file= Upload.find_all_by_folder_id(folder.id)
+                - @uploaded_file.each do |file|
+                  - if (file.folder_id == folder.id)
+                    %li.upload-file-list
+                      = icon_view(file.content_type)
+                      = link_to (file.name, user_upload_path(file.user_id, file.id),{:style=> 'text-decoration:none;outline:none'})
+                      = number_to_human_size(file.size,2)
+                      - if @is_current_user
+                        = link_to :edit_details.l, edit_user_upload_path(@user.id, file.id) if @is_current_user
+                        |
+                        = link_to(:delete.l, user_upload_path(@user.id, file.id), :confirm => "Are you sure you want to delete this file?", :method => :delete)
+      
+    - if not @invite_folder.blank?
+      .folder-list    		    
+        %h3=:invited_folders.l
+        = invited_folders(@user)
+      
+-#    .pagination=paginating_links @folders if @folders.page_count > 1
+    
+  #uploads-right
+    = render :partial => 'posts/author_profile', :locals => {:user => @user}

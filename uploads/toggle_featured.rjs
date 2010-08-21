@@ -1,0 +1,1 @@
+page.replace_html "featured", :partial => 'toggle_featured.html.haml', :locals => {:upload => @upload}

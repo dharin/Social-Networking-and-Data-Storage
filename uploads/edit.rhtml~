@@ -1,0 +1,4 @@
+<% form_for(:upload, :url => user_upload_path(@user, @upload), :html => {:multipart =>true, :method => :put, :class => "MainForm"}) do |f| %>
+        <%= collection_select (:upload, :folder_id, @folders,:id,:name) %>  
+<%= f.submit_tag "upload" %>
+<% end %>

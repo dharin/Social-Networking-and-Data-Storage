@@ -1,0 +1,37 @@
+- if @images.any?
+  .files-hedar
+    .files-hedar-icon
+      =image_tag("/images/images.jpg", :width => "19", :height => "20")
+    .files-hedar-txt
+      ="Images"
+  .files-vide0-box
+    - @images.each do |image|
+      .files-img-outer
+        .files-img
+          %div{:align => "center"}
+            - if !image.thumbnails.empty?
+              =link_to(thumbnail_view(image, :thumb), user_upload_path(image.user, image.id))
+              -#=image_tag( upload.thumbnails[1].public_filename)
+            - else
+              =link_to(image_tag("Photo_128.png"), user_upload_path(image.user, image.id))
+              -#=image_tag("Photo_128.png")
+        .files-txt-box
+          .files-blk
+            =link_to(image.name, user_upload_path(image.user, image.id))
+          .featured-blue-txt-folder
+            =:folder.l
+          .files-blk2
+            =image.folder.name
+          .files-green-txt
+            =:views.l
+          .files-blk2
+            - if !image.view_count.blank?
+              =image.view_count
+            - else
+              0
+          .files-green-txt
+            =:added.l
+          #all-files-created-date.files-blk2-date
+            =distance_of_time_in_words_to_now(image.created_at, Time.now)  
+
+  =will_paginate @images, :param_name => :imagepage

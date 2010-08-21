@@ -1,0 +1,36 @@
+- if @audio.any?
+  .files-hedar
+    .files-hedar-icon
+      =image_tag("/images/Audio.jpg", :width => "19", :height => "20")
+    .files-hedar-txt
+      ="Audio"
+  
+  .files-vide0-box
+    - @audio.each do |upload|
+      .files-img-outer
+        .files-img
+          %div{:align => "center"}
+            =link_to(image_tag("Music_128.png"), user_upload_path(upload.user, upload  .id))
+            -#=image_tag("Photo_128.png")
+        .files-txt-box
+          .files-blk
+            =link_to(upload.name, user_upload_path(upload.user, upload.id))
+          .featured-blue-txt-folder
+            =:folder.l
+          .files-blk2
+            =upload.folder.name
+          .files-green-txt
+            =:views.l
+          .files-blk2
+            - if !upload.view_count.blank?
+              =upload.view_count
+            - else
+              0
+          .files-green-txt
+            =:added.l
+          #all-files-created-date.files-blk2-date
+            =distance_of_time_in_words_to_now(upload.created_at, Time.now)  
+  
+  .pagination-txt
+    =will_paginate @audio, :param_name => :audiopage
+

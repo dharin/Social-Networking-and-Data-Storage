@@ -1,0 +1,57 @@
+#upload
+  .general-row
+    %h3 Tips
+    %p 
+      =:upload_tip_1.l
+    %p 
+      =:upload_tip_2.l
+
+  %h3 
+    =:editing_uploaded.l
+
+  .general-row
+    = error_messages_for :upload
+  - form_for(:upload, :url => user_upload_path(@user, @upload), :html => {:multipart =>true, :method => :put, :class => "MainForm"}) do |f|
+    -# params[:notice123] = @upload.name
+    -# exit
+    .general-row
+      %label
+        =:upload_files_to_this_folder.l + ":"
+        %span{:style => "{color: red;}"}
+          *
+        -#= collection_select (:upload, :folder_id, @folders, :id, :name)
+        = f.collection_select (:folder_id, @folders, :id, :name)
+        =# select_tag(:folder_id, '<option></option>'+options_from_collection_for_select(Folder.find(:all, :include => :group_folders, :conditions => "(group_folders.email = '#{@user.email}' and group_folders.status = 'confirmed' and add_files = '1') or user_id = '#{@user.id}'"), "id", "name", params[:folder_id].to_i ), {:style => "width:150px"})
+        =# select_tag(:folder_id, '<option></option>'+options_from_collection_for_select(Folder.find(:all,:conditions => "user_id = '#{@user.id}'"), "id", "name","id" ), {:style => "width:150px"})
+        = link_to( :new_folder.l, new_user_folder_path(@user))
+        =# select_tag(:folder_id, '<optgroup><option></option></optgroup>'+option_groups_from_collection_for_select(@access, Folder.find(:all,:conditions => 'user_id = @user.id'), "id", "name", "folder_id"), {:style => "width:100px"})
+    
+    .general-row
+      %label 
+        =:tags.l + ":"
+      = text_field_tag 'tag_list', @upload.tag_list, {:autocomplete => "off", :size => 35}
+  
+    .general-row
+      #tag_list_auto_complete.auto_complete
+      = auto_complete_field 'tag_list', {:url => { :controller => "tags", :action => 'auto_complete_for_tag_name'}, :tokens => [',', ' ']  }
+      
+    .general-row
+      %div{:style => "{width: auto; float: left;}"}      
+        %label
+          =:name.l + ":"
+          %span{:style => "{color: red;}"}
+            *
+      %div{:style => "{width: auto; float: left;}"}      
+        = f.text_field :name, :size => 35
+  
+    .general-row
+      #upload-description-label
+        %label
+          =:description.l + ":"
+      #upload-description-field
+        = f.text_area :description, :size => "58x5"
+  
+    %p
+      = submit_tag :update.l 
+      = :or.l
+      = link_to :cancel_and_go_back_to_my_uploads.l, user_uploads_path(@user)

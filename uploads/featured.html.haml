@@ -1,0 +1,34 @@
+.inar-page-tab-menu
+  = tabnav :mangame
+.inar-page-tab-sab-menu
+
+#featured-files-header.dark-blue-iner-hader-txt
+  =:featured_files.l
+
+%br
+
+- if @images.any? || @audios.any? || @videos.any?
+  - if @images.any?
+    = render :partial => "featured", :locals => {:files => @images.compact}
+
+  - if @audios.any?
+    = render :partial => "featured", :locals => {:files => @audios.compact}
+
+  - if @videos.any?
+    = render :partial => "featured", :locals => {:files => @videos.compact}
+- else
+  .notice-grey-text
+    =:no_files_found_sorry.l
+
+-#- @uploads.each do|u|
+-#  %ul
+-#    =icon_view(u.content_type)
+-#    -if u.name != ""
+-#      =link_to u.name, user_upload_path(u.user, u)
+-#    -else
+-#      =link_to u.file_name, user_upload_path(u.user, u)
+
+-#%p
+-#  %h3=:activity
+-#  - @recent_activity.each do |activity|
+-#    =render :partial => "activities/activity", :locals => {:activity => activity }

@@ -1,0 +1,41 @@
+.files-vide0-box
+  - files.each do |file|
+
+    .file-width  
+      .files-img{:atyle => "dsiplay: table; height: 100px; position: relative;"}
+        -#%table
+        -#  %tr
+        -#    %td{:valign => "middle", :height => "100px"}
+        -#      =link_to(thumbnail_view(file, :thumb), user_upload_path(file.user, file))
+        -#      -# if !upload.thumbnails.empty?
+        -#      -#  =link_to(image_tag(file.thumbnails[0].public_filename), user_upload_path(file.user, file))
+        -#      -# else
+        -#      -#  =image_tag("Video_128.png")
+        .files-img-container{:style => "#position: absolute;  #top: 50%;display: table-cell; vertical-align: middle;"}
+          %div{:style => "#position: relative;  #top: -50%"}
+            =link_to(thumbnail_view(file, :thumb), user_upload_path(file.user, file))
+      .files-txt-box
+        .files-blk
+          =link_to(file.name, user_upload_path(file.user, file))
+        .featured-blue-txt-folder
+          =:folder.l
+        .files-blk2
+          =link_to (file.folder.name, user_folder_path(file.folder.user, file.folder))
+        .files-green-txt
+          =:views.l
+        .files-blk2
+          - if !file.view_count.blank?
+            =file.view_count
+          - else
+            0
+        .files-green-txt
+          =:added.l
+        #all-files-created-date.files-blk2-date
+          =distance_of_time_in_words_to_now(file.created_at, Time.now)  
+  .pagination-txt
+    - if files[0].content_type =~ /image/
+      =will_paginate files, :param_name => :imagepage
+    - elsif files[0].content_type =~ /video/
+      =will_paginate files, :param_name => :videopage
+    - elsif files[0].content_type =~ /audio/
+      =will_paginate files, :param_name => :audiopage

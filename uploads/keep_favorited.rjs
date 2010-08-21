@@ -1,0 +1,2 @@
+page.replace_html "favorite", :partial => "favorites/toggle_favorite", :locals => {:favoritable => @upload}
+#page.replace_html "favorite_count", :partial => "favorited_count", :locals => {:upload => @upload}

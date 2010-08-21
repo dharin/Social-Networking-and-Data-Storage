@@ -1,0 +1,54 @@
+#featured-files-header.dark-blue-iner-hader-txt
+  - case 
+    - when (files.first.content_type =~ /image/)
+      =:images.l
+    - when files.first.content_type =~ /audio/
+      =:audio_files.l
+    - when files.first.content_type =~ /video/
+      =:videos.l
+      
+- files.each do |u|
+  .featured-file-record
+    .featured-img
+      =link_to(thumbnail_view(u, :thumb), user_upload_path(u.user, u))
+
+    .featured-file-details
+      .featured-green-txt
+        =link_to(u.name, user_upload_path(u.user, u))
+
+      .Featured-txt-box
+        #featured-details-line1
+          .featured-blue-txt-folder-2
+            =:folder.l
+          .featured-files-blk2
+            =link_to(u.folder.name, user_folder_path(u.user, u.folder))
+          .featured-files-green-txt
+            =:views.l
+          .featured-files-blk2
+            - if !u.view_count.blank? || !u.view_count.blank?
+              =u.view_count
+            - else
+              0
+        #featured-details-line2
+          .featured-files-green-txt
+            =:added.l
+          #featured-file-created-date.files-blk2-date
+            =distance_of_time_in_words_to_now(u.created_at)
+          .featured-files-green-txt
+            =:added_by.l
+          #featured-file-created-date.files-blk2-date
+            =link_to(u.user.login, user_path(u.user.custom_name))
+
+      - if u.comments.public.any?
+        .featured-file-comment-separator-line
+        .Featured-comment-box
+          - if u.comments.any?
+            .dark-blue-smll-coment-txt
+              =:last_comment_by.l
+            .comment-smll-blck-txt2
+              =link_to(u.comments.last.user.login, user_path(u.comments.last.user.custom_name))
+            .Featured-comment-content
+              =u.comments.public.last.comment.slice(0, 100)
+
+    - if !(u == files.last)
+      .featured-file-separator-line

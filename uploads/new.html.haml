@@ -1,0 +1,89 @@
+.maedl-pading-
+  .left-user-details-box
+    .hedar-taital-tax
+      =:new_upload.l
+    - form_for(:upload, :url => user_uploads_path, :html => {:multipart =>true}) do |f|
+    
+      .valid-boxleft
+        - if not (@upload.errors.empty?)
+          .hedar-2
+            .hedar-2-left-img
+            .hedar-2-bg{:style=>"width:90%;"}
+              Failure - Create File
+            .hedar-2-right-img  
+          .valid-boxleft2{:style=>"height:auto;"}
+            .edit-details-tax
+              = error_messages_for :upload
+                  
+      .boxleft{:style=>"width:350px;"}
+        .hedar-2{:style=>"width:100%"}
+          .hedar-2-left-img
+          .hedar-2-bg{:style=>"width:93%;"}
+            File Details
+          .hedar-2-right-img
+        .boxleft2{:style=>"height:45px;"}
+          .edit-details-tax
+            %label
+              =:upload_file_to_this_folder.l
+            %span{:style => "{color: red}"}
+              *
+          .edit-details-taxbox
+            = select_tag(:folder_id, '<option></option>'+options_from_collection_for_select(Folder.find(:all, :include => :group_folders, :conditions => "(group_folders.email = '#{@user.email}' and group_folders.status = 'confirmed' and add_files = '1') or user_id = '#{@user.id}'"), "id", "name", params[:folder_id].to_i), {:style => "width:150px"})
+            = link_to( :new_folder.l, new_user_folder_path(@user), {:outline => "none"})
+        
+        .boxleft2{:style=>"height:65px;"}
+          .edit-details-tax
+            %label
+              Select a file 
+            %span{:style => "{color: red}"}
+              *
+          .edit-details-taxbox
+            = f.file_field :uploaded_data, :size => "23"
+          .edit-details-tax  
+            %label
+              %em
+                = (AppConfig.MAX_UPLOAD_SIZE) 
+                = " " + :megabyte_upload_limit.l
+                
+        .boxleft2{:style=>"height:45px;"}
+          .edit-details-tax
+            %label
+              =:filename.l
+            %span{:style => "{color: red}"}
+              *
+          .edit-details-taxbox
+            = f.text_field :name, :size => "39"
+     
+        .boxleft2{:style=>"height:125px;"}
+          .edit-details-tax
+            %label
+              =:description.l
+          .edit-details-taxbox
+            = f.text_area :description, :size => "45x5"
+            
+        .boxleft2{:style=>"height:65px;"}
+          .edit-details-tax
+            %label
+              =:tags.l
+          .edit-details-taxbox
+            = text_field_tag 'tag_list', @upload.tag_list, {:autocomplete => "off", :size => "39"}
+          .edit-details-taxbox          
+            = auto_complete_field 'tag_list', {:url => { :controller => "tags", :action => 'auto_complete_for_tag_name'}, :tokens => [',', ' ']}
+        .save-button
+          = image_submit_tag("Create.png")    
+          = :or.l
+          -#= link_to :cancel_and_go_back_to_my_uploads.l, user_uploads_path(@user), {:outline => "none"}
+          = link_to :cancel_and_go_back_to_my_uploads.l, :back, {:outline => "none"}
+  .right-panal-user-details
+    .boxleft{:style=>"width:250px;"}
+      .smll-hedar
+        .smll-hedar-left-img
+        .smll-hedar-bg
+          = :tips.l
+        .smll-hedar-right-img
+      .boxleft2{:style=>"width:240px;height:auto;"}
+        .edit-details-tax
+          =:upload_tip_1.l
+        .edit-details-tax
+          =:upload_tip_2.l
+    = render :partial => 'base/ad'

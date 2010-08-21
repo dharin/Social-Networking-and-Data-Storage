@@ -1,0 +1,13 @@
+-if (current_user.admin? || current_user.moderator?) && @upload.featurable?
+  .right-menu-box2
+    #featured
+      - if @upload.featured?
+        .right-icon
+          <img src="/images/featured.png" width="18" height="18" />
+        .details-grey-txt3
+          = link_to_remote(:remove_featured.l, :url => {:action => "toggle_featured", :id => @upload.id}, :method => :get)
+      - else
+        .right-icon
+          <img src="/images/featured.png" width="18" height="18" />
+        .details-grey-txt3
+          = link_to_remote(:feature_this.l, :url => {:action => "toggle_featured", :id => @upload.id}, :method => :get)

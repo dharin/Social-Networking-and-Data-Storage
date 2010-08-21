@@ -1,0 +1,72 @@
+.maedl-pading-
+  .left-user-details-box
+    .hedar-taital-tax
+      =:editing_uploaded.l
+    - form_for(:upload, :url => user_upload_path(@user, @upload.id), :html => {:multipart =>true, :method => :put}) do |f|
+  
+      .valid-boxleft
+        - if not (@upload.errors.empty?)
+          .hedar-2
+            .hedar-2-left-img
+            .hedar-2-bg{:style=>"width:80%;"}
+              Failure - Edit File
+            .hedar-2-right-img
+          .valid-boxleft2{:style=>"height:auto;"}
+            .edit-details-tax
+              = error_messages_for :upload
+  
+      .boxleft{:style=>"width:350px;"}
+        .hedar-2{:style=>"width:100%;"}
+          .hedar-2-left-img
+          .hedar-2-bg{:style=>"width:93%;"}
+            File Details
+          .hedar-2-right-img
+        .boxleft2{:style=>"height:45px;"}
+          .edit-details-tax
+            %label
+              =:upload_file_to_this_folder.l
+            %span{:style => "{color: red}"}
+              *
+          .edit-details-taxbox
+            = f.collection_select (:folder_id, @folders, :id, :name)
+            
+        .boxleft2{:style=>"height:45px;"}
+          .edit-details-tax
+            %label
+              =:filename.l
+            %span{:style => "{color: red}"}
+              *
+          .edit-details-taxbox
+            = f.text_field :name, :size => "30"
+     
+        .boxleft2{:style=>"height:125px;"}
+          .edit-details-tax
+            %label
+              =:description.l
+          .edit-details-taxbox
+            = f.text_area :description, :size => "45x5"
+            
+        .boxleft2{:style=>"height:65px;"}
+          .edit-details-tax
+            %label
+              =:tags.l
+          .edit-details-taxbox
+            = text_field_tag 'tag_list', @upload.tag_list, {:autocomplete => "off", :size => "39"}
+            = auto_complete_field 'tag_list', {:url => { :controller => "tags", :action => 'auto_complete_for_tag_name'}, :tokens => [',', ' ']}
+        .save-button
+          = image_submit_tag("Update.png")
+          = :or.l
+          = link_to :cancel_and_go_back_to.l << " #{@upload.name}", user_upload_path(@user, @upload), {:outline => "none"}
+  .right-panal-user-details      
+    .boxleft{:style=>"width:250px;"}
+      .smll-hedar
+        .smll-hedar-left-img
+        .smll-hedar-bg
+          = :tips.l
+        .smll-hedar-right-img
+      .boxleft2{:style=>"width:240px;"}
+        .edit-details-tax
+          =:upload_tip_1.l
+        .edit-details-tax
+          =:upload_tip_2.l
+    = render :partial => 'base/ad'
